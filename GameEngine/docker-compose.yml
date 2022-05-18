@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'server'
+      MYSQL_PASSWORD: '7Q*eH-b_5su.8mBV'
+      MYSQL_ROOT_PASSWORD: '*Hs;Gb*Cf&8Ma4=h'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+# Names our volume
+volumes:
+  mysql:
