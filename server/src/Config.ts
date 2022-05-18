@@ -5,7 +5,7 @@ export default {
     environment: (() => {
         const env = process.env.NODE_ENV;
         if (env !== 'dev' && env !== 'live') {
-            console.error('NODE_ENV unrecognised, please provide "dev" or "env" by using "export".');
+            console.error('NODE_ENV unrecognised, please provide "dev" or "live" with environment vars.');
             process.exit(1);
         }
         if (env === 'dev') {

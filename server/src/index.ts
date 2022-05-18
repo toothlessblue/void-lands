@@ -7,6 +7,21 @@ const app = express();
 
 // ASSETS
 
+app.get('/assets/engine/GameClient.js', async (req, res) => {
+    res.header('Cache-Control', 'public');
+    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.js`);
+});
+
+app.get('/assets/engine/GameClient.wasm', async (req, res) => {
+    res.header('Cache-Control', 'public');
+    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.wasm`);
+});
+
+app.get('/GameClient.data', async (req, res) => {
+    res.header('Cache-Control', 'public');
+    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.data`);
+});
+
 app.get('/robots.txt', async (req, res, next) => {
     res.header('Cache-Control', 'public');
     res.sendFile(`${Config.fsRoot}/robots.txt`);
@@ -42,7 +57,7 @@ app.get('/:dimension', async (req, res) => {
     const words = req.params.dimension.split('-');
 
     for (const word of words) {
-        if (isMisspelled(word)) {
+        if (isMisspelled(word) || word.length > 5) {
             res.end(await render(req, 'invalid.twig'));
             return;
         }
@@ -50,3 +65,5 @@ app.get('/:dimension', async (req, res) => {
 
     res.end(await render(req, 'dimension.twig'));
 });
+
+app.listen(80, '0.0.0.0');

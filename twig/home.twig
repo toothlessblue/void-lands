@@ -1,0 +1,46 @@
+{% extends "index.twig" %}
+
+{% block style %}
+    <style>
+        h1 {
+            padding: 50px;
+            text-align: center;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 10%, rgba(165,235,255,1) 25%, rgba(174,237,255,1) 75%, rgba(255,255,255,0) 90%);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        h3 {
+            margin-top: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <h1>Limited</h1>
+
+    <div id="instructions">
+        <h3>How to play</h3>
+        <ul>
+            <li>You can travel to any dimension</li>
+            <li>Dimensions may contain things for you to take</li>
+            <li>You may build things with whatever you find</li>
+        </ul>
+        <p>To travel to a dimension, type the dimension ID into the URL after a slash.</p>
+        <a class="inline-link" href="/you-begin">www.toothlessblue.co.uk/you-begin</a>
+        <h3>Rules for Travelers</h3>
+        <ul>
+            <li>Dimensions are identified by a list of dash (-) seperated, correctly spelt, words</li>
+            <li>A word can be up to 5 characters long.</li>
+            <li>A dimension can have up to 2 words.</li>
+            <li>A dimension does not need to be grammatically correct.</li>
+            <li>A dimension does not need to be politically correct.</li>
+            <li>A dimension does not need to be welcoming.</li>
+        </ul>
+        <p>For example, "the-bean" is a valid ID, as is "arty", whereas "teh-blua", "arbitrary", or "my-dimension" is not.</p>
+        <p>This means, given the dictionary I'm using, 149'401'729 dimensions exist; use them wisely, or not.</p>
+        <h3>Do I need to sign up?</h3>
+        <p>No, you've had an account since the start of time.</p>
+        <p>You may change your name while within a dimension at any time.</p>
+    </div>
+{% endblock %}

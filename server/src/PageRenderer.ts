@@ -2,9 +2,18 @@ import {TwingEnvironment, TwingFilter, TwingFunction, TwingLoaderFilesystem, Twi
 import {Request} from 'express';
 import * as fs from 'fs';
 import {minify, Options} from 'html-minifier';
+import Config from './Config';
 
-const twingLoader = new TwingLoaderFilesystem('./server/templates');
-const twing = new TwingEnvironment(twingLoader);
+const twingLoader = new TwingLoaderFilesystem('../twig');
+const twing = new TwingEnvironment(twingLoader, {
+    debug: Config.environment === 'dev',
+    auto_reload: Config.environment === 'dev',
+});
+
+if (Config.environment === 'dev') {
+    //@ts-ignore
+    twing.on('template', () => twing.loadedTemplates.clear())
+}
 
 function timeSince(since: Date) {
     const difference = Math.floor((Date.now() - since.getTime()) / 1000);
