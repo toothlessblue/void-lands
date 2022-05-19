@@ -9,24 +9,19 @@
 
 sql::Driver* Database::driver;
 sql::Connection* Database::connection;
-std::vector<Database::TableBase*> Database::tables;
+std::vector<const Database::TableBase*> Database::tables;
 
 void Database::initialise() {
     Database::driver = get_driver_instance();
     Database::connection = driver->connect("127.0.0.1:3306", "server", "7Q*eH-b_5su.8mBV");
     Database::connection->setSchema("db");
 
-    Database::addTable(new Database::TableVersions);
-    Database::addTable(new Database::Entities);
+    Database::addTable(Database::TableVersions::getInstance());
+    Database::addTable(Database::Entities::getInstance());
 }
 
 void Database::destruct() {
     delete Database::connection;
-
-    for (TableBase* table : Database::tables) {
-        delete table;
-    }
-
     Database::tables.clear();
 }
 

@@ -8,20 +8,21 @@
 
 namespace Database {
     class TableVersions : public TableBase {
+    private:
+        static TableVersions instance;
+
+        TableVersions() {
+            this->VERSION = 1;
+            this->NAME = "TableVersions";
+            this->COLUMNS = new Column[2] {
+                {"tableName", "VARCHAR(20)", "PRIMARY KEY"},
+                {"version", "INT UNSIGNED", ""},
+            };
+        }
     public:
-        static const unsigned int VERSION = 1;
-        constexpr static const char* NAME = "TableVersions";
-        constexpr static const char* COLUMNS[] = {
-            "tableName VARCHAR(20) PRIMARY KEY",
-            "version INT UNSIGNED"
-        };
+        static TableVersions* getInstance();
 
-        unsigned int getVersion() override;
-        unsigned int getColumnCount() override;
-        const char* const* getColumns() override;
-        const char* getName() override;
-
-        static unsigned int getVersion(const char* tableName);
-        static void setVersion(const char* tableName, unsigned int version);
+        unsigned int getVersion(const char* tableName);
+        void setVersion(const char* tableName, unsigned int version);
     };
 }

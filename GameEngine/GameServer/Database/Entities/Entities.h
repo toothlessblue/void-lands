@@ -3,25 +3,27 @@
 //
 
 #pragma once
-
-#include <cppconn/connection.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
-#include "../Database.h"
 #include "../TableBase.h"
 
 namespace Database {
-    class Entities : public Database::TableBase {
+    class Entities : public TableBase {
+    private:
+        static Entities instance;
+
+        Entities() {
+            this->VERSION = 1;
+            this->NAME = "Entities";
+            this->COLUMNS = new Column[5] {
+                {"id", "INT", "PRIMARY KEY"},
+                {"worldId", "VARCHAR(50)", "PRIMARY KEY"},
+                {"type", "INT"},
+                {"x", "FLOAT"},
+                {"z", "FLOAT"},
+            };
+        }
+
     public:
-        constexpr static const unsigned int VERSION = 1;
-        constexpr static const char* NAME = "Entities";
-        constexpr static const char* COLUMNS[] = {
-            "id INT PRIMARY KEY",
-            "worldId VARCHAR(50) PRIMARY KEY",
-            "type INT",
-            "x FLOAT",
-            "z FLOAT"
-        };
+        static Entities* getInstance();
 
         struct Row {
             int id;
@@ -29,10 +31,5 @@ namespace Database {
             float posX;
             float posZ;
         };
-
-        unsigned int getVersion() override;
-        unsigned int getColumnCount() override;
-        const char* const* getColumns() override;
-        const char* getName() override;
     };
 }

@@ -11,7 +11,7 @@
 namespace Database {
     extern sql::Driver* driver;
     extern sql::Connection* connection;
-    extern std::vector<TableBase*> tables;
+    extern std::vector<const TableBase*> tables;
 
     void initialise();
     void destruct();
