@@ -9,7 +9,7 @@ const app = express();
 
 app.get('/assets/engine/GameClient.js', async (req, res) => {
     res.header('Cache-Control', 'public');
-    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.js`);
+    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient`);
 });
 
 app.get('/assets/engine/GameClient.wasm', async (req, res) => {
