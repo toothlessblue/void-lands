@@ -5,41 +5,36 @@
 #include "TableBase.h"
 #include "Database.h"
 #include "TableVersions/TableVersions.h"
+#include "Logger/Logger.h"
 #include <cppconn/statement.h>
 #include <string>
 
 namespace Database {
-    unsigned int TableBase::getColumnCount() {
-        return 0;
-    }
-
     void TableBase::initialiseTable() {
-        unsigned int version = TableVersions::getInstance()->getVersion(this->NAME);
+        unsigned int databaseVersion = TableVersions::getInstance()->getVersion(this->name);
 
-        if (version == 0) {
+        if (databaseVersion == 0) {
             this->createTable();
-        } else if (version < this->VERSION) {
+        } else if (databaseVersion < this->version) {
             this->updateTable();
+        } else if (databaseVersion > this->version) {
+            throw std::runtime_error(std::string() + "Database has '" + this->name + "' version " + std::to_string(databaseVersion) + ", but code is version " + std::to_string(this->version));
+            // TODO program should fail here with an "out of date database" message
         }
     }
 
     void TableBase::createTable() {
-        Column* columns = this->COLUMNS;
-        unsigned int count = this->getColumnCount();
-
-        std::string query = std::string("CREATE TABLE ") + this->NAME + " (";
-        for (unsigned int i = 0; i < count; i++) {
-            query += std::string() + columns[i].name + " " + columns[i].type + " " + columns[i].modifiers + ",";
+        std::string query = std::string("CREATE TABLE ") + this->name + " (";
+        for (unsigned int i = 0; i < this->columns.size(); i++) {
+            query += std::string() + this->columns[i].name + " " + this->columns[i].type + " " + this->columns[i].modifiers + ",";
         }
+        if (this->primaryKey.size()) query += std::string() + "PRIMARY KEY (" + this->primaryKey + "),";
         query.pop_back(); // remove trailing comma
         query += ");";
 
-        sql::Statement* statement = connection->createStatement();
-        statement->execute(query);
+        Database::execute(query);
 
-        TableVersions::getInstance()->setVersion(this->NAME, this->VERSION);
-
-        delete statement;
+        TableVersions::getInstance()->setVersion(this->name, this->version);
     }
 
     void TableBase::updateTable() {
@@ -47,16 +42,21 @@ namespace Database {
     }
 
     bool TableBase::existsInDatabase() {
-        sql::Statement* statement = connection->createStatement();
-        sql::ResultSet* result = statement->executeQuery(
-            std::string() + "SELECT * FROM information_schema.tables WHERE table_schema = 'db' AND table_name = '" +
-            this->NAME + "';");
+        if (!this->existenceChecked) {
+            sql::ResultSet* result = Database::executeQuery(
+                std::string() + "SELECT * FROM information_schema.tables WHERE table_schema = 'db' AND table_name = '" +
+                this->name + "';");
 
-        bool exists = result->next();
+            this->exists = result->next();
+            this->existenceChecked = true;
 
-        delete statement;
-        delete result;
+            delete result;
+        }
 
-        return exists;
+        return this->exists;
+    }
+
+    void TableBase::compareTables() {
+
     }
 }

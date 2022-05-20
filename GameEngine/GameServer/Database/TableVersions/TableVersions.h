@@ -11,14 +11,7 @@ namespace Database {
     private:
         static TableVersions instance;
 
-        TableVersions() {
-            this->VERSION = 1;
-            this->NAME = "TableVersions";
-            this->COLUMNS = new Column[2] {
-                {"tableName", "VARCHAR(20)", "PRIMARY KEY"},
-                {"version", "INT UNSIGNED", ""},
-            };
-        }
+        TableVersions();
     public:
         static TableVersions* getInstance();
 

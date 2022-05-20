@@ -18,9 +18,8 @@ namespace Database {
     unsigned int TableVersions::getVersion(const char* tableName) {
         if (!TableVersions::getInstance()->existsInDatabase()) return 0;
 
-        sql::Statement* statement = connection->createStatement();
         std::string query = std::string("SELECT * FROM TableVersions WHERE tableName=\"") + tableName + "\";";
-        sql::ResultSet* result = statement->executeQuery(query);
+        sql::ResultSet* result = Database::executeQuery(query);
 
         unsigned int version = 0;
 
@@ -29,15 +28,25 @@ namespace Database {
         }
 
         delete result;
-        delete statement;
 
         return version;
     }
 
     void TableVersions::setVersion(const char* tableName, unsigned int version) {
-        sql::Statement* statement = connection->createStatement();
-        statement->execute("INSERT INTO TableVersions VALUES (\"TableVersions\", 1);");
+        Database::execute(std::string() +
+            "INSERT INTO TableVersions VALUES (\"" + tableName + "\"," + std::to_string(version) + ") "
+            "ON DUPLICATE KEY "
+            "UPDATE tableName=\"" + tableName + "\", version=" + std::to_string(version) + ";"
+        );
+    }
 
-        delete statement;
+    TableVersions::TableVersions() {
+        this->version = 1;
+        this->name = "TableVersions";
+        this->columns = {
+            {"tableName", "VARCHAR(20)",  ""},
+            {"version",   "INT UNSIGNED", ""},
+        };
+        this->primaryKey = "tableName";
     }
 }

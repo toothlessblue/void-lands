@@ -10,4 +10,17 @@ namespace Database {
     Entities* Entities::getInstance() {
         return &Entities::instance;
     }
+
+    Entities::Entities() {
+        this->version = 1;
+        this->name = "Entities";
+        this->columns = {
+            {"id",      "INT",         ""},
+            {"worldId", "VARCHAR(50)", ""},
+            {"type",    "INT",         ""},
+            {"x",       "FLOAT",       ""},
+            {"z",       "FLOAT",       ""},
+        };
+        this->primaryKey = "id, worldId";
+    }
 }

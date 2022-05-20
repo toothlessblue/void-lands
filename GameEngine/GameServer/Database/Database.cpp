@@ -5,6 +5,8 @@
 #include "Database.h"
 #include "Entities/Entities.h"
 #include "TableVersions/TableVersions.h"
+#include "Logger/Logger.h"
+#include <cppconn/statement.h>
 #include <vector>
 
 sql::Driver* Database::driver;
@@ -33,3 +35,34 @@ void Database::addTable(Database::TableBase* table) {
 std::vector<char*> Database::getTableColumns(const char* tableName) {
     return {};
 }
+
+bool Database::execute(const char* query) {
+    Logger::Debug() << "Executing query: " << query;
+
+    sql::Statement* statement = connection->createStatement();
+    bool result = statement->execute(query);
+    delete statement;
+
+    return result;
+
+}
+
+bool Database::execute(std::string query) {
+    return Database::execute(&query[0]);
+}
+
+sql::ResultSet* Database::executeQuery(const char* query) {
+    Logger::Debug() << "Executing query: " << query;
+
+    sql::Statement* statement = connection->createStatement();
+    sql::ResultSet* result = statement->executeQuery(query);
+
+    delete statement;
+
+    return result;
+}
+
+sql::ResultSet* Database::executeQuery(std::string query) {
+    return Database::executeQuery(&query[0]);
+}
+

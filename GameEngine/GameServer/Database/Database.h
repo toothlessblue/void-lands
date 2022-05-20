@@ -4,6 +4,7 @@
 
 #pragma once
 #include <cppconn/connection.h>
+#include <cppconn/resultset.h>
 #include <cppconn/driver.h>
 #include <vector>
 #include "TableBase.h"
@@ -16,5 +17,11 @@ namespace Database {
     void initialise();
     void destruct();
     void addTable(TableBase* table);
+
+    bool execute(std::string query);
+    bool execute(const char* query);
+    sql::ResultSet* executeQuery(std::string query);
+    sql::ResultSet* executeQuery(const char* query);
+
     std::vector<char*> getTableColumns(const char* tableName);
 }
