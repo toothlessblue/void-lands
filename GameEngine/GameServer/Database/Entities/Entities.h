@@ -4,10 +4,37 @@
 
 #pragma once
 #include "../TableBase.h"
+#include "../SQLGetter.h"
+#include "../Database.h"
 #include <cppconn/statement.h>
 #include <cppconn/resultset.h>
 
 namespace Database {
+    struct EntitiesRow {
+        int id;
+        std::string worldId;
+        int type;
+        float x;
+        float z;
+    };
+
+    template<> class SQLGetter<EntitiesRow> : public SQLGetterBase {
+    public:
+        SQLGetter(sql::ResultSet* results) : SQLGetterBase(results) {
+
+        }
+
+        EntitiesRow getRow() {
+            return {
+                this->results->getInt("id"),
+                this->results->getString("worldId"),
+                this->results->getInt("type"),
+                static_cast<float>(this->results->getInt("x")),
+                static_cast<float>(this->results->getInt("z"))
+            };
+        }
+    };
+
     class Entities : public TableBase {
     private:
         static Entities instance;
@@ -17,45 +44,9 @@ namespace Database {
     public:
         static Entities* getInstance();
 
-        struct Row {
-            int id;
-            std::string worldId;
-            int type;
-            float posX;
-            float posZ;
-        };
+        SQLGetter<EntitiesRow> getEntitiesForWorld(std::string worldId) {
+            return SQLGetter<EntitiesRow>(Database::executeQuery("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";"));
+        }
     };
 }
 
-class SQLGetter {
-protected:
-    sql::ResultSet* results;
-
-
-};
-
-template<typename T>
-class SQLGetter : public SQLGetterBase {
-
-public:
-    SQLGetter() {
-
-    }
-
-    ~SQLGetter() {
-
-    }
-
-    T next();
-};
-
-class SQLGetter<Database::Entities::Row> : public SQLGetterBase {
-public:
-    Database::Entities::Row next() {
-        if (!this->res)
-
-        return {
-
-        }
-    }
-};

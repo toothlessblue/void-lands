@@ -13,56 +13,57 @@ sql::Driver* Database::driver;
 sql::Connection* Database::connection;
 std::vector<const Database::TableBase*> Database::tables;
 
-void Database::initialise() {
-    Database::driver = get_driver_instance();
-    Database::connection = driver->connect("127.0.0.1:3306", "server", "7Q*eH-b_5su.8mBV");
-    Database::connection->setSchema("db");
+namespace Database {
+    void initialise() {
+        driver = get_driver_instance();
+        connection = driver->connect("127.0.0.1:3306", "server", "7Q*eH-b_5su.8mBV");
+        connection->setSchema("db");
 
-    Database::addTable(Database::TableVersions::getInstance());
-    Database::addTable(Database::Entities::getInstance());
+        addTable(TableVersions::getInstance());
+        addTable(Entities::getInstance());
+    }
+
+    void destruct() {
+        delete connection;
+        tables.clear();
+    }
+
+    void addTable(TableBase* table) {
+        tables.push_back(table);
+        table->initialiseTable();
+    }
+
+    std::vector<char*> getTableColumns(const char* tableName) {
+        return {};
+    }
+
+    bool execute(const char* query) {
+        Logger::Debug() << "Executing query: " << query;
+
+        sql::Statement* statement = connection->createStatement();
+        bool result = statement->execute(query);
+        delete statement;
+
+        return result;
+
+    }
+
+    bool execute(std::string query) {
+        return execute(&query[0]);
+    }
+
+    sql::ResultSet* executeQuery(const char* query) {
+        Logger::Debug() << "Executing query: " << query;
+
+        sql::Statement* statement = connection->createStatement();
+        sql::ResultSet* result = statement->executeQuery(query);
+
+        delete statement;
+
+        return result;
+    }
+
+    sql::ResultSet* executeQuery(std::string query) {
+        return executeQuery(&query[0]);
+    }
 }
-
-void Database::destruct() {
-    delete Database::connection;
-    Database::tables.clear();
-}
-
-void Database::addTable(Database::TableBase* table) {
-    Database::tables.push_back(table);
-    table->initialiseTable();
-}
-
-std::vector<char*> Database::getTableColumns(const char* tableName) {
-    return {};
-}
-
-bool Database::execute(const char* query) {
-    Logger::Debug() << "Executing query: " << query;
-
-    sql::Statement* statement = connection->createStatement();
-    bool result = statement->execute(query);
-    delete statement;
-
-    return result;
-
-}
-
-bool Database::execute(std::string query) {
-    return Database::execute(&query[0]);
-}
-
-sql::ResultSet* Database::executeQuery(const char* query) {
-    Logger::Debug() << "Executing query: " << query;
-
-    sql::Statement* statement = connection->createStatement();
-    sql::ResultSet* result = statement->executeQuery(query);
-
-    delete statement;
-
-    return result;
-}
-
-sql::ResultSet* Database::executeQuery(std::string query) {
-    return Database::executeQuery(&query[0]);
-}
-

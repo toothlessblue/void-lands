@@ -8,6 +8,7 @@
 #include <cppconn/driver.h>
 #include <vector>
 #include "TableBase.h"
+#include "SQLGetter.h"
 
 namespace Database {
     extern sql::Driver* driver;

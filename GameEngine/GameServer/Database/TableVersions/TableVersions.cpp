@@ -11,6 +11,16 @@
 namespace Database {
     TableVersions TableVersions::instance;
 
+    TableVersions::TableVersions() {
+        this->version = 1;
+        this->name = "TableVersions";
+        this->columns = {
+            {"tableName", "VARCHAR(20)",  ""},
+            {"version",   "INT UNSIGNED", ""},
+        };
+        this->primaryKey = "tableName";
+    }
+
     TableVersions* TableVersions::getInstance() {
         return &TableVersions::instance;
     }
@@ -38,15 +48,5 @@ namespace Database {
             "ON DUPLICATE KEY "
             "UPDATE tableName=\"" + tableName + "\", version=" + std::to_string(version) + ";"
         );
-    }
-
-    TableVersions::TableVersions() {
-        this->version = 1;
-        this->name = "TableVersions";
-        this->columns = {
-            {"tableName", "VARCHAR(20)",  ""},
-            {"version",   "INT UNSIGNED", ""},
-        };
-        this->primaryKey = "tableName";
     }
 }
