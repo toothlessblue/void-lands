@@ -6,8 +6,11 @@
 #include "Database.h"
 #include "TableVersions/TableVersions.h"
 #include "Logger/Logger.h"
+#include "Description/Description.h"
 #include <cppconn/statement.h>
 #include <string>
+#include <map>
+#include <set>
 
 namespace Database {
     void TableBase::initialiseTable() {
@@ -19,7 +22,6 @@ namespace Database {
             this->updateTable();
         } else if (databaseVersion > this->version) {
             throw std::runtime_error(std::string() + "Database has '" + this->name + "' version " + std::to_string(databaseVersion) + ", but code is version " + std::to_string(this->version));
-            // TODO program should fail here with an "out of date database" message
         }
     }
 
@@ -37,8 +39,43 @@ namespace Database {
         TableVersions::getInstance()->setVersion(this->name, this->version);
     }
 
+    /**
+     * Does NOT handle type changes, only adds or removes columns and changes primary keys
+     */
     void TableBase::updateTable() {
+        SQLGetter<DescriptionRow> tableQuery = SQLGetter<Database::DescriptionRow>(Database::executeQuery(std::string() + "describe " + this->name + ";"));
 
+        // get current state attributes
+        std::map<std::string, DescriptionRow> attributesWithinDb;
+        std::map<std::string, Column> attributesWithinCode;
+
+        while (tableQuery.next()) {
+            DescriptionRow row = tableQuery.getRow();
+            attributesWithinDb.insert({row.field, row});
+        }
+
+        for (Column column : this->columns) {
+            attributesWithinCode.insert({column.name, column});
+        }
+
+        // make changes
+        std::string query = std::string() + "ALTER TABLE " + this->name + " ";
+
+        for (Column column : this->columns) {
+            if (!attributesWithinDb.count(column.name)) {
+                query += std::string() + "ADD " + column.name + " " + column.type + " " + column.modifiers + ",";
+            }
+        }
+
+        for (std::pair<std::string, DescriptionRow> column : attributesWithinDb) {
+            if (!attributesWithinCode.count(column.second.field)) {
+                query += std::string() + "DROP COLUMN " + column.second.field + ",";
+            }
+        }
+
+        query += std::string() + "DROP PRIMARY key, ADD PRIMARY key(" + this->primaryKey + ");";
+
+        Database::execute(query);
     }
 
     bool TableBase::existsInDatabase() {

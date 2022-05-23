@@ -4,14 +4,14 @@
 #include "Database/Entities/Entities.h"
 
 int main() {
-//    Logger::Info() << "Starting node";
-//
-//    WebsocketServer server;
-//    server.run();
-//
-//    Logger::Info() << "Exiting main thread";
-//
+    Logger::Info() << "Starting node";
+
     Database::initialise();
+    WebsocketServer server;
+    server.run();
+
+    Logger::Info() << "Exiting main thread";
+
 
     Database::SQLGetter<Database::EntitiesRow> results = Database::Entities::getInstance()->getEntitiesForWorld("world");
     while (results.next()) {
