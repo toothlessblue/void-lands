@@ -40,5 +40,11 @@ namespace Database {
         SQLGetter<HealthsRow> getHealthsForWorld(std::string worldId) {
             return SQLGetter<HealthsRow>(Database::executeQuery("SELECT * FROM Healths WHERE worldId=\"" + worldId + "\";"));
         }
+
+        void saveHealth(HealthsRow row) {
+            std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.health) + ")";
+
+            Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+        }
     };
 }

@@ -27,4 +27,10 @@ namespace Database {
     SQLGetter<EntitiesRow> Entities::getEntitiesForWorld(std::string worldId) {
         return SQLGetter<EntitiesRow>(Database::executeQuery("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";"));
     }
+
+    void Entities::saveEntity(EntitiesRow row) {
+        std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.type) + "," + std::to_string(row.x) + "," + std::to_string(row.z) + ")";
+
+        Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+    }
 }

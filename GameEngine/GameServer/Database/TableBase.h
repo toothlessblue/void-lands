@@ -26,6 +26,7 @@ namespace Database {
 
         bool existsInDatabase();
         void initialiseTable();
+        std::string getColumnsAsString();
 
         void dropTable();
     private:

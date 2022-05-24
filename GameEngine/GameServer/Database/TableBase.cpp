@@ -109,4 +109,16 @@ namespace Database {
         Database::execute(std::string() + "DROP TABLE " + this->name + ";");
         Database::execute(std::string() + "DELETE FROM TableVersions WHERE TableName=\"" + this->name + "\";");
     }
+
+    std::string TableBase::getColumnsAsString() {
+        std::string ret;
+
+        for (Column column : this->columns) {
+            ret += std::string() + column.name + ",";
+        }
+
+        ret.pop_back();
+
+        return ret;
+    }
 }

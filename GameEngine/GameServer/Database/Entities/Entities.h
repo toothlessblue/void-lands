@@ -45,6 +45,8 @@ namespace Database {
         static Entities* getInstance();
 
         SQLGetter<EntitiesRow> getEntitiesForWorld(std::string worldId);
+
+        void saveEntity(EntitiesRow row);
     };
 }
 

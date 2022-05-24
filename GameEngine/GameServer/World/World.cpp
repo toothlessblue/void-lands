@@ -104,6 +104,8 @@ void World::run() {
 }
 
 void World::onMessage(int connectionId, const unsigned char* payload, int length) {
+    if (!this->running) return;
+
     this->messageParser.parseData(payload, length, {connectionId});
 }
 
@@ -112,6 +114,8 @@ void World::sendMessage(int connectionId, const unsigned char* payload, int leng
 }
 
 void World::onConnect(int connectionId) {
+    if (!this->running) return;
+
     this->connectedCount++;
     this->connectionIds.insert(connectionId);
 
