@@ -12,11 +12,5 @@ int main() {
 
     Logger::Info() << "Exiting main thread";
 
-
-    Database::SQLGetter<Database::EntitiesRow> results = Database::Entities::getInstance()->getEntitiesForWorld("world");
-    while (results.next()) {
-        Logger::Debug() << "Entity ID: " << results.getRow().id;
-    }
-
     return 0;
 }

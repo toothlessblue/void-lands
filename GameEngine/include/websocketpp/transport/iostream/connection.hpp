@@ -258,7 +258,7 @@ public:
         m_is_secure = value;
     }
 
-    /// Tests whether or not the underlying transport is secure
+    /// ServerTests whether or not the underlying transport is secure
     /**
      * iostream transport will return false always because it has no information
      * about the ultimate remote endpoint. This may or may not be accurate

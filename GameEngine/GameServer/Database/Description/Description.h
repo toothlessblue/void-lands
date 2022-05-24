@@ -22,15 +22,13 @@ namespace Database {
 
         }
 
-        DescriptionRow getRow();
+        DescriptionRow getRow() {
+            return {
+                this->results->getString("Field"),
+                this->results->getString("Type"),
+                this->results->getString("Null") == "YES",
+                this->results->getString("Key") == "PRI"
+            };
+        }
     };
-
-    DescriptionRow SQLGetter<DescriptionRow>::getRow() {
-        return {
-            this->results->getString("Field"),
-            this->results->getString("Type"),
-            this->results->getString("Null") == "YES",
-            this->results->getString("Key") == "PRI"
-        };
-    }
 }

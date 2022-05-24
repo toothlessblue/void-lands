@@ -14,17 +14,6 @@ namespace Database {
         const char* modifiers;
     };
 
-    enum ChangeType {
-        Add,
-        Remove,
-        Modify,
-    };
-
-    struct ColumnChange {
-        ChangeType type;
-        Column column;
-    };
-
     class TableBase {
     public:
         bool existenceChecked = false;
@@ -37,9 +26,10 @@ namespace Database {
 
         bool existsInDatabase();
         void initialiseTable();
+
+        void dropTable();
     private:
         void createTable();
         void updateTable();
-        void compareTables();
     };
 }

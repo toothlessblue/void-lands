@@ -93,7 +93,7 @@ public:
      */
     void set_secure(bool value) {}
 
-    /// Tests whether or not the underlying transport is secure
+    /// ServerTests whether or not the underlying transport is secure
     /**
      * TODO: docs
      *

@@ -12,7 +12,7 @@ namespace Database {
     }
 
     Entities::Entities() {
-        this->version = 1;
+        this->version = 3;
         this->name = "Entities";
         this->columns = {
             {"id",      "INT",         ""},
@@ -21,6 +21,10 @@ namespace Database {
             {"x",       "FLOAT",       ""},
             {"z",       "FLOAT",       ""},
         };
-        this->primaryKey = "id, worldId";
+        this->primaryKey = "id,worldId";
+    }
+
+    SQLGetter<EntitiesRow> Entities::getEntitiesForWorld(std::string worldId) {
+        return SQLGetter<EntitiesRow>(Database::executeQuery("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";"));
     }
 }

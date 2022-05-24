@@ -45,7 +45,7 @@ void DataStructure::moveEntity(int id, float x, float z) {
 }
 
 int DataStructure::addEntity(int id, int type, float x, float z) {
-    if (this->idToIndex.count(id) > 0) return this->idToIndex[id];
+    if (this->idToIndex.count(id)) return this->idToIndex[id];
 
     int index = this->getAvailableEntityIndex();
     this->idToIndex.insert({id, index});

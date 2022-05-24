@@ -340,7 +340,7 @@ public:
      */
     virtual message_ptr get_message() = 0;
 
-    /// Tests whether the processor is in a fatal error state
+    /// ServerTests whether the processor is in a fatal error state
     virtual bool get_error() const = 0;
 
     /// Retrieves the number of bytes presently needed by the processor

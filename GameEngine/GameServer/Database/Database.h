@@ -7,13 +7,16 @@
 #include <cppconn/resultset.h>
 #include <cppconn/driver.h>
 #include <vector>
+#include <map>
 #include "TableBase.h"
 #include "SQLGetter.h"
+#include "Database/Description/Description.h"
 
 namespace Database {
     extern sql::Driver* driver;
     extern sql::Connection* connection;
     extern std::vector<const TableBase*> tables;
+    extern bool ready;
 
     void initialise();
     void destruct();
@@ -24,5 +27,5 @@ namespace Database {
     sql::ResultSet* executeQuery(std::string query);
     sql::ResultSet* executeQuery(const char* query);
 
-    std::vector<char*> getTableColumns(const char* tableName);
+    std::map<std::string, DescriptionRow>* getTableColumns(const char* tableName);
 }

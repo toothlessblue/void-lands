@@ -15,7 +15,7 @@ namespace Database {
     public:
         static TableVersions* getInstance();
 
-        unsigned int getVersion(const char* tableName);
+        int getVersion(const char* tableName);
         void setVersion(const char* tableName, unsigned int version);
     };
 }

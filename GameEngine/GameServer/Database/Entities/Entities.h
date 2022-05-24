@@ -44,9 +44,7 @@ namespace Database {
     public:
         static Entities* getInstance();
 
-        SQLGetter<EntitiesRow> getEntitiesForWorld(std::string worldId) {
-            return SQLGetter<EntitiesRow>(Database::executeQuery("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";"));
-        }
+        SQLGetter<EntitiesRow> getEntitiesForWorld(std::string worldId);
     };
 }
 

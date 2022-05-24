@@ -7,9 +7,9 @@
 #include <thread>
 #include <set>
 #include <unordered_map>
-#include "DataStruct/DataStruct.h"
 #include "PacketHandlers/PacketMetaData.h"
 #include "PacketHandlers/PacketParser/PacketParser.h"
+#include "DataStruct/DataStruct.h"
 
 class WebsocketServer;
 
