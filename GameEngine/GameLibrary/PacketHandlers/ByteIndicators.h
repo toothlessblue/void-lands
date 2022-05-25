@@ -26,7 +26,7 @@ namespace EntityDataIndicatorByte {
     enum {  // 1 byte signals what part of the entity to update
         Position,      // X, Z position of the entity                                         // 8 bytes
         Destroy,       // Command client to destroy entity                                    // 0 bytes
-        Health,        // Float of entity health                                              // 4 bytes
+        Health,        // Float of entity damage                                              // 4 bytes
         Damage,        // Damage taken by this entity                                         // 4 bytes
     };
 }

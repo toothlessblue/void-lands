@@ -10,36 +10,36 @@
 #include "Database/Database.h"
 
 namespace Database {
-    struct DamagesRow {
+    struct DropsRow {
         int id;
         std::string worldId;
-        float damage;
+        int itemId;
+        int count;
     };
 
-    template<> class SQLGetter<DamagesRow> : public SQLGetterBase {
+    template<> class SQLGetter<DropsRow> : public SQLGetterBase {
     public:
         SQLGetter(sql::ResultSet* results) : SQLGetterBase(results) {}
 
-        DamagesRow getRow() {
+        DropsRow getRow() {
             return {
                 this->results->getInt("id"),
                 this->results->getString("worldId"),
-                static_cast<float>(this->results->getInt("damage"))
+                this->results->getInt("itemId"),
+                this->results->getInt("count")
             };
         }
     };
 
-    class Damages : public TableBase {
+    class Drops : public TableBase {
     private:
-        static Damages instance;
-        Damages();
+        static Drops instance;
+        Drops();
 
     public:
-        static Damages* getInstance();
+        static Drops* getInstance();
 
-        SQLGetter<DamagesRow> getDamagesForWorld(std::string worldId) {
-            return Database::executeQuery<DamagesRow>("SELECT * FROM Damages WHERE worldId=\"" + worldId + "\";");
-        }
+        SQLGetter<DropsRow> getDropsForWorld(std::string worldId);
 
         void loadIntoDataForWorld(DataStructure* data, std::string worldId) override;
     };

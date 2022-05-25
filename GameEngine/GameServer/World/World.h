@@ -33,6 +33,8 @@ public:
     int getConnectedCount();
     std::string getWorldId();
 private:
+    void loadDatabase();
+
     void initialiseNewConnection(int connectionId, int playerEntityId);
 
     void onPosition(PacketHandlers::PacketMetaData metaData, float x, float z);

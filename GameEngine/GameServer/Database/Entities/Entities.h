@@ -47,6 +47,10 @@ namespace Database {
         SQLGetter<EntitiesRow> getEntitiesForWorld(std::string worldId);
 
         void saveEntity(EntitiesRow row);
+
+        void loadIntoDataForWorld(DataStructure* data, std::string worldId) override;
+
+        int getNextEntityId(std::string worldId);
     };
 }
 

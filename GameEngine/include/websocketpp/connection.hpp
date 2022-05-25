@@ -408,7 +408,7 @@ public:
      * The config setting `timeout_pong` controls the length of the timeout
      * period. It is specified in milliseconds.
      *
-     * This can be used to probe the health of the remote endpoint's WebSocket
+     * This can be used to probe the damage of the remote endpoint's WebSocket
      * implementation. This does not guarantee that the remote application
      * itself is still healthy but can be a useful diagnostic.
      *

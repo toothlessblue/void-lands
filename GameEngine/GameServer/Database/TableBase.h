@@ -6,6 +6,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "DataStruct/DataStruct.h"
 
 namespace Database {
     struct Column {
@@ -29,6 +30,8 @@ namespace Database {
         std::string getColumnsAsString();
 
         void dropTable();
+
+        virtual void loadIntoDataForWorld(DataStructure* data, std::string worldId);
     private:
         void createTable();
         void updateTable();

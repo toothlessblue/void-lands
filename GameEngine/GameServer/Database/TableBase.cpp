@@ -7,6 +7,7 @@
 #include "TableVersions/TableVersions.h"
 #include "Description/Description.h"
 #include "Logger/Logger.h"
+#include "DataStruct/DataStruct.h"
 #include <cppconn/statement.h>
 #include <string>
 #include <map>
@@ -92,7 +93,7 @@ namespace Database {
 
     bool TableBase::existsInDatabase() {
         if (!this->existenceChecked) {
-            sql::ResultSet* result = Database::executeQuery(
+            sql::ResultSet* result = Database::executeQueryRaw(
                 std::string() + "SELECT * FROM information_schema.tables WHERE table_schema = 'db' AND table_name = '" +
                 this->name + "';");
 
@@ -120,5 +121,9 @@ namespace Database {
         ret.pop_back();
 
         return ret;
+    }
+
+    void TableBase::loadIntoDataForWorld(DataStructure* data, std::string worldId) {
+
     }
 }

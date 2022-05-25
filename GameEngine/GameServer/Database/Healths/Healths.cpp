@@ -14,11 +14,17 @@ namespace Database {
         this->columns = {
             {"id",      "int",        ""},
             {"worldId", "varchar(50)",""},
-            {"health",  "float",      ""}
+            {"damage",  "float",      ""}
         };
     }
 
     Healths* Healths::getInstance() {
         return &Healths::instance;
+    }
+
+    void Healths::saveHealth(HealthsRow row) {
+        std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.health) + ")";
+
+        Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
     }
 }

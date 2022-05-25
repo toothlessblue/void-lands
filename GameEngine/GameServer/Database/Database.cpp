@@ -8,12 +8,13 @@
 #include "Healths/Healths.h"
 #include "Logger/Logger.h"
 #include "Database/Damages/Damages.h"
+#include "Database/Drops/Drops.h"
 #include <cppconn/statement.h>
 #include <vector>
 
 sql::Driver* Database::driver;
 sql::Connection* Database::connection;
-std::vector<const Database::TableBase*> Database::tables;
+std::vector<Database::TableBase*> Database::tables;
 bool Database::ready = false;
 
 namespace Database {
@@ -28,6 +29,7 @@ namespace Database {
         Database::addTable(Entities::getInstance());
         Database::addTable(Healths::getInstance());
         Database::addTable(Damages::getInstance());
+        Database::addTable(Drops::getInstance());
 
         Database::ready = true;
     }
@@ -57,7 +59,20 @@ namespace Database {
         return execute(&query[0]);
     }
 
-    sql::ResultSet* executeQuery(const char* query) {
+    std::map<std::string, DescriptionRow>* getTableColumns(const char* tableName) {
+        std::map<std::string, DescriptionRow>* attributesWithinDb = new std::map<std::string, DescriptionRow>();
+
+        SQLGetter<DescriptionRow> tableQuery = Database::executeQuery<Database::DescriptionRow>(std::string() + "describe " + tableName + ";");
+
+        while (tableQuery.next()) {
+            DescriptionRow row = tableQuery.getRow();
+            attributesWithinDb->insert({row.field, row});
+        }
+
+        return attributesWithinDb;
+    }
+
+    sql::ResultSet* executeQueryRaw(const char* query) {
         Logger::Debug() << "Executing query: " << query;
 
         sql::Statement* statement = connection->createStatement();
@@ -68,20 +83,7 @@ namespace Database {
         return result;
     }
 
-    sql::ResultSet* executeQuery(std::string query) {
-        return executeQuery(&query[0]);
-    }
-
-    std::map<std::string, DescriptionRow>* getTableColumns(const char* tableName) {
-        std::map<std::string, DescriptionRow>* attributesWithinDb = new std::map<std::string, DescriptionRow>();
-
-        SQLGetter<DescriptionRow> tableQuery = SQLGetter<Database::DescriptionRow>(Database::executeQuery(std::string() + "describe " + tableName + ";"));
-
-        while (tableQuery.next()) {
-            DescriptionRow row = tableQuery.getRow();
-            attributesWithinDb->insert({row.field, row});
-        }
-
-        return attributesWithinDb;
+    sql::ResultSet* executeQueryRaw(std::string query) {
+        return executeQueryRaw(&query[0]);
     }
 }

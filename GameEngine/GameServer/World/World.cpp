@@ -11,6 +11,9 @@
 #include "PacketHandlers/Position/Position.h"
 #include "PacketHandlers/Ping/Ping.h"
 #include "Database/Entities/Entities.h"
+#include "Database/Healths/Healths.h"
+#include "Database/Drops/Drops.h"
+#include "Database/Damages/Damages.h"
 #include <thread>
 #include <functional>
 #include <chrono>
@@ -21,29 +24,27 @@ World::World(std::string worldId, WebsocketServer* server) {
     this->server = server;
     this->worldId = worldId;
 
-    Database::SQLGetter<Database::EntitiesRow> getter = Database::Entities::getInstance()->getEntitiesForWorld(this->worldId);
-
-    while (getter.next()) {
-        Database::EntitiesRow row = getter.getRow();
-        this->data.addEntity(row.id, row.type, row.x, row.z);
-
-        if (row.id >= this->nextEntityId) {
-            this->nextEntityId = row.id + 1;
-        }
-    }
+    this->loadDatabase();
 
     this->messageParser.addHandler(new PacketHandlers::Position(std::bind(&World::onPosition, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     this->messageParser.addHandler(new PacketHandlers::Ping(std::bind(&World::onPing, this, std::placeholders::_1)));
-    //this->messageParser.onCraft(std::bind(&World::onCraft, this, connectionId, std::placeholders::_1));
-    //this->messageParser.onPlace(std::bind(&World::onPlace, this, connectionId, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-    //this->messageParser.onPickUp(std::bind(&World::onPickUp, this, connectionId, std::placeholders::_1));
-    //this->messageParser.onPing(std::bind(&World::onPing, this, connectionId));
-    //this->messageParser.onDropItem(std::bind(&World::onDropItem, this, connectionId, std::placeholders::_1));
+    //this->messageParser.addHandler(new PacketHandlers::Craft(std::bind(&World::onCraft, this, std::placeholders::_1));
+    //this->messageParser.addHandler(new PacketHandlers::Place(std::bind(&World::onPlace, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    //this->messageParser.addHandler(new PacketHandlers::PickUp(std::bind(&World::onPickUp, this, std::placeholders::_1));
+    //this->messageParser.addHandler(new PacketHandlers::DropItem(std::bind(&World::onDropItem, this, std::placeholders::_1));
 
     this->runThread = std::thread(std::bind(&World::run, this));
     this->runThread.detach();
 
     Logger::Info() << "Starting world " << worldId << "!";
+}
+
+void World::loadDatabase() {
+    for (Database::TableBase* table : Database::tables) {
+        table->loadIntoDataForWorld(&this->data, this->worldId);
+    }
+
+    this->nextEntityId = Database::Entities::getInstance()->getNextEntityId(this->worldId);
 }
 
 std::string World::getWorldId() {

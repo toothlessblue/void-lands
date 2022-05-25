@@ -14,7 +14,6 @@ public:
 
     DataStructure();
 
-
     int getAvailableEntityIndex();
     std::unordered_map<int, int> idToIndex;
 
@@ -59,7 +58,7 @@ public:
         std::unordered_map<int, Drop> drops;
     } resources;
 
-    // Sets of entity IDs used to construct update packets
+    // Sets of entity IDs used to track changes frame to frame
     void clearUpdateSets();
 
     std::set<int> entitiesWithUpdates;

@@ -21,4 +21,14 @@ namespace Database {
     Damages* Damages::getInstance() {
         return &Damages::instance;
     }
+
+    void Damages::loadIntoDataForWorld(DataStructure* data, std::string worldId) {
+        SQLGetter<DamagesRow> getter = this->getDamagesForWorld(worldId);
+
+        while (getter.next()) {
+            DamagesRow row = getter.getRow();
+
+            data->setDamage(row.id, row.damage);
+        }
+    }
 }

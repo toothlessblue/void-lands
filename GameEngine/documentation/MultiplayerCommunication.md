@@ -24,5 +24,5 @@ These indicators may only appear after a BeginEntity, and before an EndEntity
 | Position  | X, Z position of the entity                                      | 8 bytes, 2 floats |
 | Type      | Type ID of entity, mandatory if entity ID is not known to client | 4 bytes, int      |
 | Destroy   | Command client to destroy entity                                 | 0 bytes           |
-| Health    | Max health of the entity                                         | 4 bytes, float    |
+| Health    | Max damage of the entity                                         | 4 bytes, float    |
 | Damage    | Damage taken by the entity                                       | 4 bytes, float    |

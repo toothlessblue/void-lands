@@ -24,7 +24,7 @@ namespace Database {
             return {
                 this->results->getInt("id"),
                 this->results->getString("worldId"),
-                static_cast<float>(this->results->getInt("health"))
+                static_cast<float>(this->results->getInt("damage"))
             };
         }
     };
@@ -38,13 +38,19 @@ namespace Database {
         static Healths* getInstance();
 
         SQLGetter<HealthsRow> getHealthsForWorld(std::string worldId) {
-            return SQLGetter<HealthsRow>(Database::executeQuery("SELECT * FROM Healths WHERE worldId=\"" + worldId + "\";"));
+            return Database::executeQuery<HealthsRow>("SELECT * FROM Healths WHERE worldId=\"" + worldId + "\";");
         }
 
-        void saveHealth(HealthsRow row) {
-            std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.health) + ")";
+        void saveHealth(HealthsRow row);
 
-            Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+        void loadIntoDataForWorld(DataStructure* data, std::string worldId) override {
+            SQLGetter<HealthsRow> getter = this->getHealthsForWorld(worldId);
+
+            while (getter.next()) {
+                HealthsRow row = getter.getRow();
+
+                data->setMaxHealth(row.id, row.health);
+            }
         }
     };
 }

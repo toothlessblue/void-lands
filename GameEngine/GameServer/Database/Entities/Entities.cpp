@@ -25,12 +25,32 @@ namespace Database {
     }
 
     SQLGetter<EntitiesRow> Entities::getEntitiesForWorld(std::string worldId) {
-        return SQLGetter<EntitiesRow>(Database::executeQuery("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";"));
+        return Database::executeQuery<EntitiesRow>("SELECT * FROM Entities WHERE worldId=\"" + worldId + "\";");
     }
 
     void Entities::saveEntity(EntitiesRow row) {
         std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.type) + "," + std::to_string(row.x) + "," + std::to_string(row.z) + ")";
 
         Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+    }
+
+    void Entities::loadIntoDataForWorld(DataStructure* data, std::string worldId) {
+        SQLGetter<EntitiesRow> getter = this->getEntitiesForWorld(worldId);
+
+        while (getter.next()) {
+            EntitiesRow row = getter.getRow();
+
+            data->addEntity(row.id, row.type, row.x, row.z);
+        }
+    }
+
+    int Entities::getNextEntityId(std::string worldId) {
+        sql::ResultSet* result = Database::executeQueryRaw("SELECT MAX(id) AS next FROM Entities WHERE worldId=\"" + worldId + "\";");
+
+        if (!result->next()) return -1;
+
+        int id = result->getInt("Next");
+        delete result;
+        return id + 1;
     }
 }

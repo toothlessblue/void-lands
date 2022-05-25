@@ -25,12 +25,12 @@ namespace Database {
     int TableVersions::getVersion(const char* tableName) {
         if (!TableVersions::getInstance()->existsInDatabase()) return -1;
         std::string query = std::string("SELECT * FROM TableVersions WHERE tableName=\"") + tableName + "\";";
-        sql::ResultSet* result = Database::executeQuery(query);
+        SQLGetter<Database::TableVersionsRow> getter = Database::executeQuery<Database::TableVersionsRow>(query);
         int version = -1;
-        if (result->next()) {
-            version = result->getUInt("version");
+        if (getter.next()) {
+            version = getter.getRow().version;
         }
-        delete result;
+
         return version;
     }
 
