@@ -45,7 +45,7 @@ namespace Database {
     }
 
     int Entities::getNextEntityId(std::string worldId) {
-        sql::ResultSet* result = Database::executeQueryRaw("SELECT MAX(id) AS next FROM Entities WHERE worldId=\"" + worldId + "\";");
+        sql::ResultSet* result = Database::executeQueryRaw("SELECT MAX(id) AS Next FROM Entities WHERE worldId=\"" + worldId + "\";");
 
         if (!result->next()) return -1;
 

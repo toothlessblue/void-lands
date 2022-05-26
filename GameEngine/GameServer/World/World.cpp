@@ -14,6 +14,8 @@
 #include "Database/Healths/Healths.h"
 #include "Database/Drops/Drops.h"
 #include "Database/Damages/Damages.h"
+#include "Database/Worlds/Worlds.h"
+#include "WorldGenerator/WorldGenerator.h"
 #include <thread>
 #include <functional>
 #include <chrono>
@@ -23,6 +25,10 @@ const unsigned int World::TICK_TIME_MILLISECONDS;
 World::World(std::string worldId, WebsocketServer* server) {
     this->server = server;
     this->worldId = worldId;
+
+    if (!Database::Worlds::getInstance()->isGenerated(this->worldId)) {
+        WorldGenerator::generateWorld(this->worldId);
+    }
 
     this->loadDatabase();
 
