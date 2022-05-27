@@ -14,7 +14,7 @@ namespace Database {
         this->columns = {
             {"id",      "int",        ""},
             {"worldId", "varchar(50)",""},
-            {"damage",  "float",      ""}
+            {"health",  "float",      ""}
         };
     }
 
@@ -25,6 +25,20 @@ namespace Database {
     void Healths::saveHealth(HealthsRow row) {
         std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.health) + ")";
 
-        Database::execute(std::string() + "REPLACE INTO Entities (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+        Database::execute(std::string() + "REPLACE INTO Healths (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+    }
+
+    void Healths::loadIntoDataForWorld(DataStructure* data, std::string worldId) {
+        SQLGetter<HealthsRow> getter = this->getHealthsForWorld(worldId);
+
+        while (getter.next()) {
+            HealthsRow row = getter.getRow();
+
+            data->setMaxHealth(row.id, row.health);
+        }
+    }
+
+    SQLGetter<HealthsRow> Healths::getHealthsForWorld(std::string worldId) {
+        return Database::executeQuery<HealthsRow>("SELECT * FROM Healths WHERE worldId=\"" + worldId + "\";");
     }
 }

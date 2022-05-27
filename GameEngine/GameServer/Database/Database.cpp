@@ -9,6 +9,7 @@
 #include "Logger/Logger.h"
 #include "Database/Damages/Damages.h"
 #include "Database/Drops/Drops.h"
+#include "Database/Worlds/Worlds.h"
 #include <cppconn/statement.h>
 #include <vector>
 
@@ -30,6 +31,7 @@ namespace Database {
         Database::addTable(Healths::getInstance());
         Database::addTable(Damages::getInstance());
         Database::addTable(Drops::getInstance());
+        Database::addTable(Worlds::getInstance());
 
         Database::ready = true;
     }

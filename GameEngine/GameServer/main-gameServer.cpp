@@ -1,6 +1,7 @@
 #include "WebsocketServer/WebsocketServer.h"
 #include "Logger/Logger.h"
 #include "Database/Database.h"
+#include "WorldGenerator/WorldGenerator.h"
 
 int main() {
     Logger::Info() << "Starting node";

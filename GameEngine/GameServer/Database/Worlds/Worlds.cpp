@@ -18,7 +18,7 @@ namespace Database {
             {"worldId", "VARCHAR(50)", ""},
             {"isGenerated", "BOOLEAN", ""},
         };
-        this->primaryKey = "id,worldId";
+        this->primaryKey = "worldId";
     }
 
     bool Worlds::isGenerated(std::string worldId) {

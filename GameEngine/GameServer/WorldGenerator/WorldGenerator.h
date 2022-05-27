@@ -11,6 +11,7 @@
 #include "glm/vec2.hpp"
 #include "Utils/Random.h"
 #include "Database/Entities/Entities.h"
+#include "Logger/Logger.h"
 
 class WorldGenerator {
 public:
@@ -23,13 +24,7 @@ public:
         return glm::vec2((cos(angle) * x) - (sin(angle) * z), (sin(angle) * x) + (cos(angle) * z));
     }
 
-    static void generateWorld(std::string worldId) {
-        int entityId = 0;
-
-        for (int i = 0; i < 50; i++) {
-            WorldGenerator::entityGenerators[EntityTypes::Tree](worldId, entityId++);
-        }
-    }
+    static void generateWorld(std::string worldId);
 
     static std::unordered_map<int, std::function<void(std::string worldId, int id)>> entityGenerators;
 };
