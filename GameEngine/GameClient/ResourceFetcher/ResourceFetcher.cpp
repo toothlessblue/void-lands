@@ -12,9 +12,8 @@ namespace ResourceFetcher {
     void onDownloadComplete(emscripten_fetch_t* fetch) {
         Logger::Info() << "Downloading " << fetch->url << " succeeded";
 
-        std::string* fileData = new std::string(fetch->data);
-
         fileCache[fetch->url].state = State::Loaded;
+        fileCache[fetch->url].data = new std::string(fetch->data);
 
         emscripten_fetch_close(fetch);
     }
