@@ -14,6 +14,7 @@
 #include "Networking/Networking.h"
 #include "Logger/Logger.h"
 #include "Renderer/EntityRenderer/EntityRenderer.h"
+#include "ResourceFetcher/ResourceFetcher.h"
 
 void initialisation() {
     Config::initialise();
@@ -62,6 +63,8 @@ void mainloop() {
 }
 
 int main() {
+    ResourceFetcher::startFetch("http://localhost/assets/scss/default.css");
+
     Logger::Info() << "Hello world!";
 
     emscripten_set_main_loop(mainloop, 0, 0);

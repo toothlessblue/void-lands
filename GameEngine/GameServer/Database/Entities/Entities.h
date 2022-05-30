@@ -29,8 +29,8 @@ namespace Database {
                 this->results->getInt("id"),
                 this->results->getString("worldId"),
                 this->results->getInt("type"),
-                static_cast<float>(this->results->getInt("x")),
-                static_cast<float>(this->results->getInt("z"))
+                static_cast<float>(this->results->getDouble("x")),
+                static_cast<float>(this->results->getDouble("z"))
             };
         }
     };
