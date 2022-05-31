@@ -5,8 +5,8 @@
 #pragma once
 
 
-class TextureLoader {
-public:
-    static unsigned int loadDDS(const char* imagePath);
-};
+namespace TextureLoader {
+    unsigned int loadFileDDS(const char* imagePath);
+    unsigned int loadDDS(const char* data, unsigned int length);
+}
 

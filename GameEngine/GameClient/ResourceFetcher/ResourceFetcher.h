@@ -17,7 +17,8 @@ namespace ResourceFetcher {
     };
 
     struct Resource {
-        std::string* data;
+        char* data;
+        unsigned int dataLength;
         State state;
     };
 
@@ -27,5 +28,7 @@ namespace ResourceFetcher {
 
     void onDownloadFailed(emscripten_fetch_t* fetch);
 
+    Resource* getResource(std::string url);
+
     void startFetch(const char* url);
-};
+}

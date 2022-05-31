@@ -32,14 +32,13 @@ VertexArrayBuffer* EntityRenderer::vab;
 VertexArrayObject* EntityRenderer::vao;
 
 GLuint EntityRenderer::program;
-GLuint EntityRenderer::textureId;
+NetworkTexture EntityRenderer::texture("/assets/images/test-image.dds");
 
 void EntityRenderer::initialise() {
     EntityRenderer::vao = new VertexArrayObject();
     EntityRenderer::vab = new VertexArrayBuffer(GL_ARRAY_BUFFER);
     EntityRenderer::uab = new VertexArrayBuffer(GL_ARRAY_BUFFER);
     EntityRenderer::ebo = new VertexArrayBuffer(GL_ELEMENT_ARRAY_BUFFER);
-    EntityRenderer::textureId = TextureLoader::loadDDS("/textures/test-image.dds");
 
     // bind vao
     EntityRenderer::vao->bind();
@@ -76,4 +75,39 @@ void EntityRenderer::initialise() {
 
 bool EntityRenderer::sortingFunction(int a, int b) {
     return GameData::data.entities.zs[a] > GameData::data.entities.zs[b];
+}
+
+void EntityRenderer::renderEntities() {
+    glUseProgram(EntityRenderer::program);
+    glActiveTexture(GL_TEXTURE0);
+    EntityRenderer::vao->bind();
+
+    int indexes[DataStructure::MAX_ENTITIES];
+
+    glm::vec3 cameraPosition = Camera::getPosition();
+
+    for (int i = 0; i < DataStructure::MAX_ENTITIES; i++) {
+        indexes[i] = i;
+    }
+
+    std::sort(std::begin(indexes), std::end(indexes), &EntityRenderer::sortingFunction);
+    glm::mat4 viewProjectionMatrix = Camera::getProjectionMatrix() * Camera::getViewMatrix();
+
+
+    for (int i = 0; i < DataStructure::MAX_ENTITIES; i++) {
+        int index = indexes[i];
+
+        if (GameData::data.entities.ids[index] == -1) continue;
+
+        Transform transform;
+        transform.setPosition(glm::vec3(GameData::data.entities.xs[index], 0, GameData::data.entities.zs[index]));
+
+        glm::mat4 modelViewProjection = viewProjectionMatrix * transform.getModelMatrix();
+        glUniformMatrix4fv(glGetUniformLocation(EntityRenderer::program, "modelViewProjection"), 1, GL_FALSE, &modelViewProjection[0][0]);
+        glBindTexture(GL_TEXTURE_2D, EntityRenderer::texture.getTextureId()); // TODO get texture by type of entity
+        // TODO apply sprite map uvs
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    }
+
+    EntityRenderer::vao->unbind();
 }

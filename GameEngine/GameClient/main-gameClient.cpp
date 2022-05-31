@@ -63,8 +63,6 @@ void mainloop() {
 }
 
 int main() {
-    ResourceFetcher::startFetch("http://localhost/assets/scss/default.css");
-
     Logger::Info() << "Hello world!";
 
     emscripten_set_main_loop(mainloop, 0, 0);

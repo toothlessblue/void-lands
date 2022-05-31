@@ -41,8 +41,8 @@ void WebsocketServer::onOpen(websocketpp::connection_hdl handle) {
 
     std::string worldId = this->server.get_con_from_hdl(handle)->get_resource();
 
-    if (worldId.size() == 0) { // TODO world ID verification
-        this->server.close(handle, 1008, "Do not call the void. You do not want it to call back.");
+    if (worldId.size() == 0) { // TODO world ID verification/processing
+        this->server.close(handle, 1008, "Do not hail the void. You do not want it to respond.");
         return;
     }
 
