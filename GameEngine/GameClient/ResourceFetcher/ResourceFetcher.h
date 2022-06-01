@@ -4,12 +4,13 @@
 
 
 #pragma once
-#include <string.h>
+#include <string>
 #include <emscripten/fetch.h>
 #include <unordered_map>
 #include "Logger/Logger.h"
 
-namespace ResourceFetcher {
+class ResourceFetcher {
+public:
     enum State {
         Loading,
         Loaded,
@@ -17,18 +18,18 @@ namespace ResourceFetcher {
     };
 
     struct Resource {
-        char* data;
+        const char* data;
         unsigned int dataLength;
         State state;
     };
 
-    extern std::unordered_map<std::string, Resource> fileCache;
+    static std::unordered_map<std::string, Resource*> fileCache;
 
-    void onDownloadComplete(emscripten_fetch_t* fetch);
+    static void onDownloadComplete(emscripten_fetch_t* fetch);
 
-    void onDownloadFailed(emscripten_fetch_t* fetch);
+    static void onDownloadFailed(emscripten_fetch_t* fetch);
 
-    Resource* getResource(std::string url);
+    static Resource* getResource(std::string url);
 
-    void startFetch(const char* url);
-}
+    static Resource* startFetch(std::string url);
+};

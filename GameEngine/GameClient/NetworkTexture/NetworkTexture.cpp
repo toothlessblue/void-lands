@@ -5,7 +5,7 @@
 #include "NetworkTexture.h"
 
 NetworkTexture::NetworkTexture(const char* url) {
-    this->resource = ResourceFetcher::getResource(url);
+    this->resource = ResourceFetcher::getResource(std::string(url));
 }
 
 GLuint NetworkTexture::getTextureId() {

@@ -6,56 +6,65 @@
 #include <emscripten/fetch.h>
 #include <unordered_map>
 
-namespace ResourceFetcher {
-    std::unordered_map<std::string, Resource> fileCache;
+std::unordered_map<std::string, ResourceFetcher::Resource*> ResourceFetcher::fileCache;
 
-    void onDownloadComplete(emscripten_fetch_t* fetch) {
-        Logger::Info() << "Downloading " << fetch->url << " succeeded";
+void ResourceFetcher::onDownloadComplete(emscripten_fetch_t* fetch) {
+    std::string url(fetch->url);
 
-        Resource* resource = &fileCache[std::string(fetch->url)];
+    Logger::Info() << "Downloading " << url << " succeeded";
+    Logger::Info() << ResourceFetcher::fileCache.count(url);
 
-        resource->data = (char*)malloc(fetch->totalBytes * sizeof(char));
-        Logger::Debug() << "Malloc called";
-        for (int i = 0; i < fetch->totalBytes; i++) {
-            resource->data[i] = fetch->data[i];
-        }
+    Resource* resource = ResourceFetcher::fileCache[url];
 
-        resource->state = State::Loaded;
-        resource->dataLength = fetch->totalBytes;
-
-        emscripten_fetch_close(fetch);
+    char* data = (char*)malloc(fetch->totalBytes * sizeof(char));
+    for (int i = 0; i < fetch->totalBytes; i++) {
+        data[i] = fetch->data[i];
     }
 
-    void onDownloadFailed(emscripten_fetch_t* fetch) {
-        Logger::Error() << "Downloading " << fetch->url << " failed";
+    resource->data = data;
 
-        fileCache[fetch->url].state = State::Failed;
+    resource->state = State::Loaded;
+    resource->dataLength = fetch->totalBytes;
 
-        emscripten_fetch_close(fetch);
+    emscripten_fetch_close(fetch);
+}
+
+void ResourceFetcher::onDownloadFailed(emscripten_fetch_t* fetch) {
+    Logger::Error() << "Downloading " << fetch->url << " failed";
+
+    ResourceFetcher::fileCache[fetch->url]->state = State::Failed;
+
+    emscripten_fetch_close(fetch);
+}
+
+ResourceFetcher::Resource* ResourceFetcher::startFetch(std::string url) {
+    if (fileCache.count(url)) return fileCache[url]; // Never perform the same fetch twice
+
+    Logger::Info() << "Downloading " << url;
+
+    ResourceFetcher::Resource* resource = new Resource {
+        "", 0, State::Loading
+    };
+
+    ResourceFetcher::fileCache.insert({url, resource});
+
+    emscripten_fetch_attr_t attr;
+    emscripten_fetch_attr_init(&attr);
+
+    strcpy(attr.requestMethod, "GET");
+    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+    attr.onsuccess = &ResourceFetcher::onDownloadComplete;
+    attr.onerror = &ResourceFetcher::onDownloadFailed;
+
+    emscripten_fetch(&attr, &url[0]);
+
+    return resource;
+}
+
+ResourceFetcher::Resource* ResourceFetcher::getResource(std::string url) {
+    if (!ResourceFetcher::fileCache.count(url)) {
+        return ResourceFetcher::startFetch(url);
     }
 
-    void startFetch(std::string url) {
-        if (fileCache.count(url)) return; // Never perform the same fetch twice
-
-        emscripten_fetch_attr_t attr;
-        emscripten_fetch_attr_init(&attr);
-
-        strcpy(attr.requestMethod, "GET");
-        attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-        attr.onsuccess = ResourceFetcher::onDownloadComplete;
-        attr.onerror = ResourceFetcher::onDownloadFailed;
-        emscripten_fetch(&attr, &url[0]);
-
-        fileCache.insert({url, {
-            nullptr, 0, State::Loading
-        }});
-    }
-
-    Resource* getResource(std::string url) {
-        if (!fileCache.count(url)) {
-            startFetch(url);
-        }
-        
-        return &fileCache[url];
-    }
+    return ResourceFetcher::fileCache[url];
 }
