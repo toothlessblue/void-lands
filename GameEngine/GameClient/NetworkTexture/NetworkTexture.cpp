@@ -9,8 +9,9 @@ NetworkTexture::NetworkTexture(const char* url) {
 }
 
 GLuint NetworkTexture::getTextureId() {
-    if (this->resource->state == ResourceFetcher::State::Loaded && this->textureId == 0) {
+    if (this->resource->state == ResourceFetcher::State::Loaded && !this->loaded) {
         this->textureId = TextureLoader::loadDDS(this->resource->data, this->resource->dataLength);
+        this->loaded = true;
     }
 
     return this->textureId;

@@ -11,10 +11,12 @@ std::unordered_map<std::string, ResourceFetcher::Resource*> ResourceFetcher::fil
 void ResourceFetcher::onDownloadComplete(emscripten_fetch_t* fetch) {
     std::string url(fetch->url);
 
-    Logger::Info() << "Downloading " << url << " succeeded";
-    Logger::Info() << ResourceFetcher::fileCache.count(url);
-
     Resource* resource = ResourceFetcher::fileCache[url];
+
+    if (resource == nullptr) {
+        Logger::Error() << "Failed to download \"" << url << "\", resource is nullptr";
+        return;
+    }
 
     char* data = (char*)malloc(fetch->totalBytes * sizeof(char));
     for (int i = 0; i < fetch->totalBytes; i++) {
@@ -22,11 +24,11 @@ void ResourceFetcher::onDownloadComplete(emscripten_fetch_t* fetch) {
     }
 
     resource->data = data;
-
-    resource->state = State::Loaded;
     resource->dataLength = fetch->totalBytes;
+    resource->state = State::Loaded;
 
     emscripten_fetch_close(fetch);
+    Logger::Info() << "Downloading \"" << url << "\" succeeded";
 }
 
 void ResourceFetcher::onDownloadFailed(emscripten_fetch_t* fetch) {
@@ -38,9 +40,9 @@ void ResourceFetcher::onDownloadFailed(emscripten_fetch_t* fetch) {
 }
 
 ResourceFetcher::Resource* ResourceFetcher::startFetch(std::string url) {
-    if (fileCache.count(url)) return fileCache[url]; // Never perform the same fetch twice
+    if (ResourceFetcher::fileCache.count(url)) return ResourceFetcher::fileCache[url]; // Never perform the same fetch twice
 
-    Logger::Info() << "Downloading " << url;
+    Logger::Info() << "Downloading \"" << url << "\"";
 
     ResourceFetcher::Resource* resource = new Resource {
         "", 0, State::Loading
@@ -53,8 +55,8 @@ ResourceFetcher::Resource* ResourceFetcher::startFetch(std::string url) {
 
     strcpy(attr.requestMethod, "GET");
     attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-    attr.onsuccess = &ResourceFetcher::onDownloadComplete;
-    attr.onerror = &ResourceFetcher::onDownloadFailed;
+    attr.onsuccess = ResourceFetcher::onDownloadComplete;
+    attr.onerror = ResourceFetcher::onDownloadFailed;
 
     emscripten_fetch(&attr, &url[0]);
 

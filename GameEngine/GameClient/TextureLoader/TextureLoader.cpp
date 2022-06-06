@@ -100,6 +100,8 @@ unsigned int TextureLoader::loadFileDDS(const char* imagePath) {
 unsigned int TextureLoader::loadDDS(const char* data, unsigned int length) {
     Logger::Info() << "Loading image from data";
 
+    // TODO this is broken
+
     std::stringstream stream(data, length);
 
     /* verify the type of file */

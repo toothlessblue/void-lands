@@ -19,4 +19,5 @@ public:
 private:
     ResourceFetcher::Resource* resource;
     GLuint textureId = 0;
+    bool loaded = false;
 };

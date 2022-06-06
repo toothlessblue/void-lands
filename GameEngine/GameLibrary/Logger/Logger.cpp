@@ -15,5 +15,5 @@ Logger::Debug::~Debug() {
 }
 
 Logger::Error::~Error() {
-    std::cout << "[ERROR] " << s.str() << std::endl;
+    std::cerr << "[ERROR] " << s.str() << std::endl;
 }
