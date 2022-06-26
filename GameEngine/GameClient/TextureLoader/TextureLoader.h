@@ -7,6 +7,7 @@
 
 namespace TextureLoader {
     unsigned int loadFileDDS(const char* imagePath);
-    unsigned int loadDDS(const char* data, unsigned int length);
+    unsigned int loadDDS(const unsigned char* data, unsigned int length);
+    unsigned int loadPNG(const unsigned char* data, unsigned int length);
 }
 

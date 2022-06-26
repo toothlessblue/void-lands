@@ -67,11 +67,11 @@ void World::run() {
         // TODO do updates
         // TODO send update packet to relevant entities
 
-        std::vector<unsigned char> data;
+        std::vector<unsigned char> packetData;
         for (int entityId : this->data.entitiesWithUpdates) {
             unsigned int entityIndex = this->data.idToIndex[entityId];
 
-            EntityUpdateBuilder entity = PacketHandlers::Entity::build(&data, entityId, this->data.entities.types[entityIndex]);
+            EntityUpdateBuilder entity = PacketHandlers::Entity::build(&packetData, entityId, this->data.entities.types[entityIndex]);
 
 
             if (this->data.dyingEntities.count(entityId)) {
@@ -95,17 +95,19 @@ void World::run() {
 
         this->data.clearUpdateSets();
 
-        if (data.size() > 0) {
+        if (packetData.size() > 0) {
             // TODO duplicate packet for each connected client
             // TODO insert client specific updates
 
             for (int connection : this->connectionIds) {
-                this->sendMessage(connection, &data[0], data.size());
+                this->sendMessage(connection, &packetData[0], packetData.size());
             }
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(World::TICK_TIME_MILLISECONDS));
     }
+
+    this->saveWorld();
 
     delete this;
 }
@@ -204,5 +206,33 @@ void World::initialiseNewConnection(int connectionId, int playerEntityId) {
     }
 
     this->sendMessage(connectionId, &data[0], data.size());
+}
+
+void World::saveWorld() {
+    for (int i = 0; i < DataStructure::MAX_ENTITIES; i++) {
+        Database::Entities::getInstance()->saveEntity({
+            this->data.entities.ids[i],
+            this->worldId,
+            this->data.entities.types[i],
+            this->data.entities.xs[i],
+            this->data.entities.zs[i],
+        });
+    }
+
+    for (std::pair<int, DataStructure::Healths::Damage> damage : this->data.healths.damages) {
+        Database::Damages::getInstance()->saveDamage({
+            damage.first,
+            this->worldId,
+            damage.second.value,
+        });
+    }
+
+    for (std::pair<int, float> maxHealth : this->data.healths.maxHealths) {
+        Database::Healths::getInstance()->saveHealth({
+            maxHealth.first,
+            this->worldId,
+            maxHealth.second,
+        });
+    }
 }
 

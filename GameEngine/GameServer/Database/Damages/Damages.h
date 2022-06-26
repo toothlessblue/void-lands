@@ -42,5 +42,6 @@ namespace Database {
         }
 
         void loadIntoDataForWorld(DataStructure* data, std::string worldId) override;
+        void saveDamage(DamagesRow row);
     };
 }

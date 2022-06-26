@@ -5,6 +5,7 @@
 #include "EntityRenderer.h"
 #include "../ShaderHelper/ShaderHelper.h"
 #include "../../TextureLoader/TextureLoader.h"
+#include "../../EntityMetadata.h"
 
 // model coordinates
 GLfloat EntityRenderer::verticalPlaneVertices[] = {
@@ -32,11 +33,8 @@ VertexArrayBuffer* EntityRenderer::vab;
 VertexArrayObject* EntityRenderer::vao;
 
 GLuint EntityRenderer::program;
-NetworkTexture* EntityRenderer::texture;
 
 void EntityRenderer::initialise() {
-    EntityRenderer::texture = new NetworkTexture("/assets/images/test-image.dds");
-
     EntityRenderer::vao = new VertexArrayObject();
     EntityRenderer::vab = new VertexArrayBuffer(GL_ARRAY_BUFFER);
     EntityRenderer::uab = new VertexArrayBuffer(GL_ARRAY_BUFFER);
@@ -101,12 +99,15 @@ void EntityRenderer::renderEntities() {
 
         if (GameData::data.entities.ids[index] == -1) continue;
 
+        glm::vec2 scale = EntityMetadata::scales[GameData::data.entities.types[index]];
+
         Transform transform;
-        transform.setPosition(glm::vec3(GameData::data.entities.xs[index], 0, GameData::data.entities.zs[index]));
+        transform.setPosition(glm::vec3(GameData::data.entities.xs[index], 0.5 * scale.y, GameData::data.entities.zs[index]));
+        transform.scale = glm::vec3(scale.x, scale.y, 1);
 
         glm::mat4 modelViewProjection = viewProjectionMatrix * transform.getModelMatrix();
         glUniformMatrix4fv(glGetUniformLocation(EntityRenderer::program, "modelViewProjection"), 1, GL_FALSE, &modelViewProjection[0][0]);
-        glBindTexture(GL_TEXTURE_2D, EntityRenderer::texture->getTextureId()); // TODO get texture by type of entity
+        glBindTexture(GL_TEXTURE_2D, EntityMetadata::textures[GameData::data.entities.types[index]]->getTextureId()); // TODO get texture by type of entity
         // TODO apply sprite map uvs
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }

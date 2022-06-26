@@ -31,4 +31,10 @@ namespace Database {
             data->setDamage(row.id, row.damage);
         }
     }
+
+    void Damages::saveDamage(DamagesRow row) {
+        std::string values = std::string("(") + std::to_string(row.id) + ",\"" + row.worldId + "\"," + std::to_string(row.damage) + ")";
+
+        Database::execute(std::string() + "REPLACE INTO Damages (" + this->getColumnsAsString() + ") VALUES " + values + ";");
+    }
 }

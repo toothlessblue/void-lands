@@ -34,7 +34,7 @@ void Floor::initialise() {
 
     Floor::transform = new Transform();
     Floor::transform->addRotation(glm::vec3(0, 0.785398f, 0)); // rotation in radians, 45 degrees
-    Floor::transform->setPosition(glm::vec3(0, -0.5f, 0));
+    Floor::transform->setPosition(glm::vec3(0, 0, 0));
 
     glm::mat4 modelViewProjection = Camera::getProjectionMatrix() * Camera::getViewMatrix() * Floor::transform->getModelMatrix();
 

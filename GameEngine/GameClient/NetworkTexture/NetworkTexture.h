@@ -12,12 +12,21 @@
 
 class NetworkTexture {
 public:
-    NetworkTexture(const char* url);
+    enum Type {
+        DDS,
+        PNG
+    };
+
+    NetworkTexture(const char* url, Type type);
 
     GLuint getTextureId();
 
 private:
+    unsigned int loadData();
+
     ResourceFetcher::Resource* resource;
     GLuint textureId = 0;
     bool loaded = false;
+    const char* url;
+    Type type;
 };

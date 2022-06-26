@@ -18,7 +18,7 @@ void ResourceFetcher::onDownloadComplete(emscripten_fetch_t* fetch) {
         return;
     }
 
-    char* data = (char*)malloc(fetch->totalBytes * sizeof(char));
+    unsigned char* data = (unsigned char*)malloc(fetch->totalBytes * sizeof(char));
     for (int i = 0; i < fetch->totalBytes; i++) {
         data[i] = fetch->data[i];
     }
@@ -28,11 +28,11 @@ void ResourceFetcher::onDownloadComplete(emscripten_fetch_t* fetch) {
     resource->state = State::Loaded;
 
     emscripten_fetch_close(fetch);
-    Logger::Info() << "Downloading \"" << url << "\" succeeded";
+    Logger::Info() << "Downloaded \"" << url << "\" successfully";
 }
 
 void ResourceFetcher::onDownloadFailed(emscripten_fetch_t* fetch) {
-    Logger::Error() << "Downloading " << fetch->url << " failed";
+    Logger::Error() << "Failed to download \"" << fetch->url << "\"";
 
     ResourceFetcher::fileCache[fetch->url]->state = State::Failed;
 
@@ -45,7 +45,7 @@ ResourceFetcher::Resource* ResourceFetcher::startFetch(std::string url) {
     Logger::Info() << "Downloading \"" << url << "\"";
 
     ResourceFetcher::Resource* resource = new Resource {
-        "", 0, State::Loading
+        {}, 0, State::Loading
     };
 
     ResourceFetcher::fileCache.insert({url, resource});

@@ -9,7 +9,7 @@ const app = express();
 
 app.get('/assets/engine/GameClient.js', async (req, res) => {
     res.header('Cache-Control', 'public');
-    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient`);
+    res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.js`);
 });
 
 app.get('/assets/engine/GameClient.wasm', async (req, res) => {
@@ -17,7 +17,7 @@ app.get('/assets/engine/GameClient.wasm', async (req, res) => {
     res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.wasm`);
 });
 
-app.get('/w/GameClient.data', async (req, res) => {
+app.get('/GameClient.data', async (req, res) => {
     res.header('Cache-Control', 'public');
     res.sendFile(`${Config.fsRoot}/GameEngine/build/emscripten/GameClient/GameClient.data`);
 });
@@ -53,7 +53,7 @@ app.get('/', async (req, res) => {
     res.end(await render(req, 'home.twig'));
 });
 
-app.get('/w/:dimension', async (req, res) => {
+app.get('/:dimension', async (req, res) => {
     const words = req.params.dimension.split('-');
 
     for (const word of words) {

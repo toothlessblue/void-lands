@@ -19,7 +19,7 @@ public:
 
     World(std::string worldId, WebsocketServer* server);
 
-    void run();
+    [[noreturn]] void run();
 
     void onMessage(int connectionId, const unsigned char* payload, int length);
     void onConnect(int connectionId);
@@ -43,6 +43,8 @@ private:
     void onPickUp(PacketHandlers::PacketMetaData metaData, int entityId);
     void onPing(PacketHandlers::PacketMetaData metaData);
     void onDropItem(PacketHandlers::PacketMetaData metaData, int itemId);
+
+    void saveWorld();
 
     PacketHandlers::PacketParser messageParser;
 

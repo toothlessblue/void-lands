@@ -18,7 +18,7 @@ public:
     };
 
     struct Resource {
-        const char* data;
+        const unsigned char* data;
         unsigned int dataLength;
         State state;
     };

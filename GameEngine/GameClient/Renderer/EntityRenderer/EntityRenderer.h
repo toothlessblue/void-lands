@@ -34,7 +34,5 @@ private:
     static GLfloat uvs[8];
     static GLuint program;
 
-    static NetworkTexture* texture;
-
 };
 
